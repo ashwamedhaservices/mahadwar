@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Referral Form</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <style>
+    html,
+    body {
+      height: 100%;
+    }
+
+    html {
+      display: table;
+      margin: auto;
+    }
+
+    body {
+      background-color: #E4F5F6;
+      display: table;
+      margin: auto;
+    }
+
+    input {
+      width: 100%;
+      height: 47px;
+      background: #6F8AD0;
+      border-radius: 4px;
+      box-sizing: border-box;
+      padding: 6px;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    label {
+      width: 100%;
+      height: 26px;
+      font-family: 'Poppins';
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 26px;
+      text-align: center;
+      font-variant: small-caps;
+      color: #113B7A;
+      margin-bottom: 10px;
+    }
+
+    button {
+      font-family: 'Poppins';
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      text-align: center;
+      font-variant: small-caps;
+      width: 100%;
+      height: 47px;
+      background: #DD95AD;
+      box-shadow: 0px 4px 4px #A55B73;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-family: 'Poppins';
+      font-style: normal;
+      font-weight: 600;
+      font-size: 32px;
+      line-height: 48px;
+      /* identical to box height */
+
+      text-align: center;
+      font-variant: small-caps;
+
+      color: #113B7A;
+    }
+
+    /* Media queries for mobile responsiveness */
+    @media only screen and (max-width: 480px) {
+      h1 {
+        font-size: 22px;
+        font-family: 'Poppins';
+        font-style: normal;
+        font-weight: 600;
+        line-height: 48px;
+        /* identical to box height */
+
+        text-align: center;
+        font-variant: small-caps;
+
+        color: #113B7A;
+      }
+
+      input,
+      label,
+      button {
+        width: 100%;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div>
+    <h1>Ashwamedha</h1>
+    <img src="./logo.png" alt="Referral Image" id="referral_image">
+  </div>
+  <h1>Create Account</h1>
+
+  <form id="referral-form">
+    <div>
+      <label for="full_name">Full Name:</label>
+      <input type="text" id="full_name" name="full_name">
+    </div>
+
+    <div>
+      <label for="phone_number">Phone Number:</label>
+      <input type="text" id="phone_number" name="phone_number">
+    </div>
+
+    <div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password">
+    </div>
+    <div>
+      <label for="password">Referral Code:</label>
+      <input type="text" id="referral_code" name="referral_code" readonly>
+    </div>
+
+
+    <button type="button" onclick="createReferral()">Create Account</button>
+    <br>
+  </form>
+  <br>
+
+  <div id="response-message" style="display: none;"></div>
+  <br>
+  <br>
+  <script>
+    document.onreadystatechange = function () {
+      console.log(getQueryParam('referral_code'))
+      document.getElementById('referral_code').value = getQueryParam('referral_code')
+    }
+    // Extract referral_code from URL query parameter
+    function getQueryParam(name) {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get(name);
+    }
+
+    // Create referral through API call
+    function createReferral() {
+      const fullName = document.getElementById('full_name').value;
+      const phoneNumber = document.getElementById('phone_number').value;
+      const password = document.getElementById('password').value;
+      const referralCode = getQueryParam('referral_code');
+
+      const referralData = {
+        full_name: fullName,
+        mobile_number: phoneNumber,
+        password: password,
+        referral_code: referralCode
+      };
+
+      fetch('http://64.227.164.116/api/v1/users.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ 'users': referralData })
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Handle success response
+          const responseMessage = document.getElementById('response-message');
+          responseMessage.innerText = 'Referral created successfully!';
+          responseMessage.style.display = 'block';
+        })
+        .catch(error => {
+          // Handle error
+          console.error('Error:', error);
+        });
+    }
+  </script>
+</body>
+
+</html>
